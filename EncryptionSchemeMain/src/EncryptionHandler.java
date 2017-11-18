@@ -10,20 +10,77 @@ public class EncryptionHandler {
 	private int numRounds;
 	
 	private char[] hashChar;
-	private ArrayList<byte[]> subKeyList = new ArrayList<byte[]>();
+	//private ArrayList<byte[]> subKeyList = new ArrayList<byte[]>();
 	private ArrayList<byte[]> halfBlockArray = new ArrayList<byte[]>();
 	
 	private ArrayList<Integer> hashChars=new ArrayList<Integer>();
 	private ArrayList<byte[]> hashBytes = new ArrayList<byte[]>();
 	
-	private byte xorByte[];
-	private ArrayList<byte[]> xorBlockKey = new ArrayList<byte[]>();
+	
+	
+	
+	private ArrayList<byte[]> encryptedOutput = new ArrayList<byte[]>();
+	private ArrayList<byte[]> unencryptedOutput = new ArrayList<byte[]>();
 	
 	public EncryptionHandler(int blockSize, int keySize, int numRounds){
 		this.blockSize=blockSize;
 		this.keySize=keySize;
 		this.numRounds=numRounds;
 		
+	}
+	
+	public void encrypt(ArrayList<Integer> fileChars) throws IOException{
+		
+		splitIntoHalfBlocks(fileChars);
+		splitHash(hashChars);
+		System.out.println("Unecrypted:\t");
+		for(int x=0;x<halfBlockArray.size();x++)
+		{
+			byte holder[] =new byte[4];
+			 holder = halfBlockArray.get(x);
+			 
+			 System.out.print((char)(holder[0]+holder[1]+holder[2]+holder[3]));
+		}
+		
+		
+		encryptedOutput = xorBlockAndKey(halfBlockArray,hashBytes);
+		System.out.println();
+		 System.out.println("Encrypted:\t");
+		for(int x=0;x<encryptedOutput.size();x++)
+		{
+			byte holder[] =new byte[4];
+			 holder = encryptedOutput.get(x);
+			
+			 System.out.print((char)(holder[0]+holder[1]+holder[2]+holder[3]));
+		}
+		
+		
+		/*byte[] holder =new byte[4];
+		 holder = encryptedOutput.get(0);
+		 System.out.println(holder[0]);
+			System.out.println(holder[1]);
+			System.out.println(holder[2]);
+			System.out.println(holder[3]);*/
+		System.out.println();
+		
+		unencryptedOutput=unXorBlockAndKey(encryptedOutput,hashBytes);
+		
+		System.out.println();
+		 System.out.println("Encrypted:\t");
+		for(int x=0;x<unencryptedOutput.size();x++)
+		{
+			byte holder[] =new byte[4];
+			 holder = unencryptedOutput.get(x);
+			
+			 System.out.print((char)(holder[0]+holder[1]+holder[2]+holder[3]));
+		}
+		
+		//executeRounds(xorBlockKey,hashBytes);
+		
+		
+		
+		
+	
 	}
 	
 	public void generateSubKeys(String userPassHash){
@@ -42,83 +99,7 @@ public class EncryptionHandler {
 		}
 		
 	}
-	
-	
-	public void encrypt(ArrayList<Integer> fileChars) throws IOException{
-		
-		splitIntoHalfBlocks(fileChars);
-		splitHash(hashChars);
-		
-		xorByte =new byte[4];//XOR together key and block
-		for(int x= 0;x<halfBlockArray.size();x++)
-		{
-			
-			byte[] blockBytes = halfBlockArray.get(x);
-			
-			byte[] keyBytes = hashBytes.get(x);
-			System.out.println(x%hashBytes.size());
-			
-			/*for(int y =0;y<halfBlockArray.get(x).length;y++)
-			{
-				//System.out.print("Block "+blockBytes[y]);
-				//System.out.print("\tKey "+keyBytes[y]);
-				xorByte[y] = (byte)(blockBytes[y]^keyBytes[y]);
-				//System.out.println("\tXOR "+(char)xorByte[y]);
-			}
-		 xorBlockKey.add(xorByte);
-		 System.out.print((char)(xorByte[0]+xorByte[1]+xorByte[2]+xorByte[3]));*/
-		}
-		
-		
-		
-		
-		
-		
-		
-		
-		//XOR each byte together 
-		/*byte test[] = null;
-		for(int y=0;y<xorBlockKey.size();y++)
-		{
-			test =xorBlockKey.get(y);
-		for(int x =0;x<xorBlockKey.get(0).length;x++)
-		{
-			
-			System.out.println("BEFORE"+test[x]);
-			test[x]=(byte) ~test[x];
-			System.out.println("AFTER"+test[x]);
-		}
-		System.out.println((char)(test[0]+test[1]+test[2]+test[3]));
-		}*/
-		
-		/*for(int x= 0;x<xorBlockKey.size();x++)
-		{
-			byte asd[]=xorBlockKey.get(x);
-			System.out.print(asd);
-			System.out.print(asd[1]);
-			System.out.print(asd[2]);
-			System.out.print((char)asd[3]);
-		}*/
-		
-		
-		
-	
-		//Integer y = halfBlockArray.get(0) ^ hashBytes.get(0);
-		//hashChar[x]
-		//System.out.println("XOR Result =" +(num1 ^ num2));
-		
-		//System.out.print(blockArray.get(0));
-		
-	
-	}
-	public void splitBlock(ArrayList<byte[]> halfBlock)
-    {
-        for(int i = 0; i<halfBlock.size();i++)
-        {
-            byte [] splitBytes = ByteBuffer.allocate(Byte.SIZE/8).put(halfBlock.get(i)).array();
-            
-        }
-}
+
 	
 	private void splitHash(ArrayList<Integer> fileChars){
 		
@@ -167,10 +148,128 @@ public class EncryptionHandler {
 		
 	}
 	
-	private void executeRound(){
+	private ArrayList<byte[]> xorBlockAndKey(ArrayList<byte[]> blockArray, ArrayList<byte[]> keyArray){
+		
+		ArrayList<byte[]> xorBlockKey = new ArrayList<byte[]>();
+		
+		for(int x= 0;x<blockArray.size();x++)
+		{
+			byte xorByte[]=new byte[4];
+			byte blockBytes[] = blockArray.get(x);
+			byte keyBytes[] = keyArray.get(x%keyArray.size());
+			
+			
+			for(int y =0;y<blockArray.get(x).length;y++)
+			{
+				//Debug prints
+				//System.out.print("Block "+blockBytes[y]);
+				//System.out.print("\tKey "+keyBytes[y]);
+				xorByte[y] = (byte)(blockBytes[y]^keyBytes[y]);
+				//System.out.println("\tXOR "+xorByte[y]);
+			}
+			
+		 xorBlockKey.add(xorByte);
+		// System.out.println("OUTPUT"+(xorByte[0]+xorByte[1]+xorByte[2]+xorByte[3]));
+		 
+		}
+		/*for(int x= 0;x<xorBlockKey.size();x++)
+		{
+			byte[] holder =new byte[4];
+			 holder = xorBlockKey.get(x);
+			 System.out.println(holder[0]);
+				System.out.println(holder[1]);
+				System.out.println(holder[2]);
+				System.out.println(holder[3]);
+		}*/
+		return xorBlockKey;
+	}
+	
+	private ArrayList<byte[]> unXorBlockAndKey(ArrayList<byte[]> blockArray, ArrayList<byte[]> keyArray) {
+		ArrayList<byte[]> unXorBlockKey = new ArrayList<byte[]>();
+		
+		for(int x= 0;x<blockArray.size();x++)
+		{
+			byte xorByte[]=new byte[4];
+			byte blockBytes[] = blockArray.get(x);
+			byte keyBytes[] = keyArray.get(x%keyArray.size());
+			
+			
+			for(int y =0;y<blockArray.get(x).length;y++)
+			{
+				//Debug prints
+				//System.out.print("Block "+blockBytes[y]);
+				//System.out.print("\tKey "+keyBytes[y]);
+				xorByte[y] = (byte)(blockBytes[y]^keyBytes[y]);
+				//System.out.println("\tXOR "+xorByte[y]);
+			}
+			
+		 unXorBlockKey.add(xorByte);
+		 //System.out.println("OUTPUT"+(xorByte[0]+xorByte[1]+xorByte[2]+xorByte[3]));
+		 
+		}
+		/*for(int x= 0;x<unXorBlockKey.size();x++)
+		{
+			byte[] holder =new byte[4];
+			 holder = unXorBlockKey.get(x);
+			 System.out.println(holder[0]);
+				System.out.println(holder[1]);
+				System.out.println(holder[2]);
+				System.out.println(holder[3]);
+		}//*/
+		return unXorBlockKey;
+	}
+	
+	private void executeRounds(ArrayList<byte[]> blockArray, ArrayList<byte[]> keyArray){
+		/*for(int x= 0;x<numRounds;x++)
+		{
+			byte[] holder =new byte[4];
+			byte[] blockBytes = null;
+			
+			for(int y= 0;y<blockArray.size();y++)
+			{
+				blockBytes = xorBlockKey.get(y);
+				System.out.println(holder[0]);
+				System.out.println(holder[1]);
+				System.out.println(holder[2]);
+				System.out.println(holder[3]);
+				
+				for(int z =0;z<blockArray.get(y).length;z++)
+				{
+					holder[z]=(byte) ~blockBytes[z];
+					System.out.print(blockBytes[z]);
+					System.out.println("\t"+holder[z]);
+				}
+				
+				encryptedOutput.add(holder);
+				
+			}
+			for(int e= 0;e<encryptedOutput.size();e++)
+			{
+				byte xorByte[]=new byte[4];
+				byte formBytes[] = blockArray.get(e);
+				byte keyBytes[] = keyArray.get(e%keyArray.size());
+				
+				
+				for(int y =0;y<blockArray.get(x).length;y++)
+				{
+					//Debug prints
+					//System.out.print("Block "+blockBytes[y]);
+					//System.out.print("\tKey "+keyBytes[y]);
+					//System.out.println("\tXOR "+(char)xorByte[y]);
+					xorByte[y] = (byte)(formBytes[y]^keyBytes[y]);
+				}
+				
+			 xorBlockKey.add(xorByte);
+			// System.out.println("OUTPUT"+(xorByte[0]+xorByte[1]+xorByte[2]+xorByte[3]));
+			 
+			}
+			
+		//}//*///numrounds
+		
 		
 		
 	}
+	
 	
 	public void decrypt(){
 	
