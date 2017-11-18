@@ -16,7 +16,8 @@ public class EncryptionHandler {
 	private ArrayList<Integer> hashChars=new ArrayList<Integer>();
 	private ArrayList<byte[]> hashBytes = new ArrayList<byte[]>();
 	
-	
+	private byte xorByte[];
+	private ArrayList<byte[]> xorBlockKey = new ArrayList<byte[]>();
 	
 	public EncryptionHandler(int blockSize, int keySize, int numRounds){
 		this.blockSize=blockSize;
@@ -39,6 +40,7 @@ public class EncryptionHandler {
 			}*/
 			hashBytes.add(bytes);
 		}
+		
 	}
 	
 	
@@ -47,21 +49,60 @@ public class EncryptionHandler {
 		splitIntoHalfBlocks(fileChars);
 		splitHash(hashChars);
 		
+		xorByte =new byte[4];//XOR together key and block
 		for(int x= 0;x<halfBlockArray.size();x++)
 		{
 			
+			byte[] blockBytes = halfBlockArray.get(x);
+			
+			byte[] keyBytes = hashBytes.get(x);
+			System.out.println(x%hashBytes.size());
+			
+			/*for(int y =0;y<halfBlockArray.get(x).length;y++)
+			{
+				//System.out.print("Block "+blockBytes[y]);
+				//System.out.print("\tKey "+keyBytes[y]);
+				xorByte[y] = (byte)(blockBytes[y]^keyBytes[y]);
+				//System.out.println("\tXOR "+(char)xorByte[y]);
+			}
+		 xorBlockKey.add(xorByte);
+		 System.out.print((char)(xorByte[0]+xorByte[1]+xorByte[2]+xorByte[3]));*/
 		}
-		for(int x =0;x<halfBlockArray.get(0).length;x++)
+		
+		
+		
+		
+		
+		
+		
+		
+		//XOR each byte together 
+		/*byte test[] = null;
+		for(int y=0;y<xorBlockKey.size();y++)
 		{
-			byte[] blockBytes = halfBlockArray.get(0);
-			byte[] keyBytes = hashBytes.get(0);
-			char xorBlockKey =(char) (blockBytes[3]^keyBytes[3]);
-			System.out.println(xorBlockKey);
+			test =xorBlockKey.get(y);
+		for(int x =0;x<xorBlockKey.get(0).length;x++)
+		{
+			
+			System.out.println("BEFORE"+test[x]);
+			test[x]=(byte) ~test[x];
+			System.out.println("AFTER"+test[x]);
 		}
+		System.out.println((char)(test[0]+test[1]+test[2]+test[3]));
+		}*/
+		
+		/*for(int x= 0;x<xorBlockKey.size();x++)
+		{
+			byte asd[]=xorBlockKey.get(x);
+			System.out.print(asd);
+			System.out.print(asd[1]);
+			System.out.print(asd[2]);
+			System.out.print((char)asd[3]);
+		}*/
 		
 		
 		
-		
+	
 		//Integer y = halfBlockArray.get(0) ^ hashBytes.get(0);
 		//hashChar[x]
 		//System.out.println("XOR Result =" +(num1 ^ num2));
@@ -70,6 +111,14 @@ public class EncryptionHandler {
 		
 	
 	}
+	public void splitBlock(ArrayList<byte[]> halfBlock)
+    {
+        for(int i = 0; i<halfBlock.size();i++)
+        {
+            byte [] splitBytes = ByteBuffer.allocate(Byte.SIZE/8).put(halfBlock.get(i)).array();
+            
+        }
+}
 	
 	private void splitHash(ArrayList<Integer> fileChars){
 		
@@ -95,11 +144,13 @@ public class EncryptionHandler {
 	}
 	
 	private void splitIntoHalfBlocks(ArrayList<Integer> fileChars){
-		
+	
 		for(int x = 0; x<fileChars.size(); x++ )
 		{
 			byte[] bytes = ByteBuffer.allocate(Integer.SIZE/8).putInt(fileChars.get(x)).array();
 			halfBlockArray.add(bytes);
+			
+			
 			
 			//Debug statement to list half-blocks
 			/*for(int y= 0;y<bytes.length;y++)
