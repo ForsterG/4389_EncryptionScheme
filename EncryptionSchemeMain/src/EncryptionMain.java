@@ -9,30 +9,34 @@ import javax.crypto.SecretKey;
 public class EncryptionMain 
 {
 	static String userPassword= "UTDALLAS"; // user entered password;
+	static String falsePassword ="HACKER ATTEMPTING TO CRACK";
 	static int blockSize = 64;
 	static int keySize = 64;//currently based on SHA256 return value
-	static int numRounds = 16;
+	static int numRounds = 0;
+	
+	
 	static String hashedPassword;
+	static String hashedFile;
 	static byte userSalt[];
+	static byte fileSalt[];
 	
     public static void main(String[] args) 
     {
     	try {
 			FileHandler fh = new FileHandler();
-			
 			fh.importFile("C:\\Users\\Garrett\\Documents\\GitHub\\4389_EncryptionScheme\\EncryptionSchemeMain\\testFile.txt");
 			
 			userSalt =HashHandler.returnSalt();
 			hashedPassword = HashHandler.SHA256(userPassword);
+			hashedPassword = HashHandler.SHA256(falsePassword);
 			
-			keyHandler kh = new keyHandler();
-			keySize = hashedPassword.length()-1;
+			System.out.println("Hashed Password: "+hashedPassword);
+			EncryptionHandler eh = new EncryptionHandler(numRounds,hashedPassword,falsePassword,fh.returnFile());
 			
-			EncryptionHandler eh = new EncryptionHandler(blockSize,keySize, numRounds,kh);//block size,key size
 			
-			eh.generateSubKeys(hashedPassword);
-			eh.encrypt(fh.returnFile());
-			eh.decrypt(userPassword);
+			fileSalt =HashHandler.returnSalt();
+			hashedFile=	HashHandler.SHA256(eh.encryptedText);
+			System.out.println("Hashed File: "+hashedFile);
 			
 				
 		} catch (IOException e) {

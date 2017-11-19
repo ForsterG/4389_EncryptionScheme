@@ -37,11 +37,7 @@ class HashHandler{
 
         return generatedHash;
         }
-    
-////////////////////////////////////////////////////////////////////////////////////////////////
-//  Function to return salt.
-//
-////////////////////////////////////////////////////////////////////////////////////////////////
+
       public static byte[] returnSalt(){
     	
         try{
@@ -49,7 +45,7 @@ class HashHandler{
         salt= new byte[16];
         secure.nextBytes(salt);
       }catch(NoSuchAlgorithmException e){
-        //
+        
       }
 
         return salt;
