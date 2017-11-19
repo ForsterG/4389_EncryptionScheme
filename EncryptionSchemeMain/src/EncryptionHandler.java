@@ -71,6 +71,7 @@ public class EncryptionHandler {
 			
 		out.close();
 		
+		
 		return encryptedOutput;
 	}
 	

@@ -1,18 +1,12 @@
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.Key;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 
 public class EncryptionMain 
 {
 	static String userPassword= "UTDALLAS"; // user entered password;
 	static String falsePassword ="FALSE PASSWORD";
 	static int numRounds = 16;
-	
 	
 	static String hashedPassword;
 	static String hashedFile;
@@ -38,7 +32,6 @@ public class EncryptionMain
 			System.out.println("Hashed File: "+hashedFile);
 			
 			
-			
 			//Demo Integrity Check
 			FileOutputStream out = null;
 			out = new FileOutputStream(eh.encryptedText);
@@ -48,10 +41,7 @@ public class EncryptionMain
 			fileSalt =HashHandler.returnSalt();
 			hashedFile=	HashHandler.SHA256(eh.encryptedText);
 			System.out.println("Hashed File: "+hashedFile);
-			
-			
-			
-			
+			//END DEMO
 			
 				
 		} catch (IOException e) {
