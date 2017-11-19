@@ -7,6 +7,7 @@ package encryptionschememain;
 
 import java.io.IOException;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -14,17 +15,37 @@ import javax.crypto.SecretKey;
 
 public class EncryptionMain 
 {
+	String userPassword= "UTDALLAS"; // user entered password;
+	int blockSize = 64;
+	int keySize = 64;//currently based on SHA256 return value
+	int numRounds = 16;
+	String hashedPassword;
+	byte userSalt[];
+	
     public static void main(String[] args) 
     {
-        FileHandler fh = new FileHandler();
-	EncryptionHandler eh = new EncryptionHandler();
+    	try {
+			FileHandler fh = new FileHandler();
+			fh.importFile("C:\\Users\\Garrett\\Documents\\GitHub\\4389_EncryptionScheme\\EncryptionSchemeMain\\testFile.txt");
+			
+			userSalt =HashHandler.returnSalt();
+			hashedPassword = HashHandler.SHA256(userPassword);
+			keySize = hashedPassword.length()-1;
+			
+			EncryptionHandler eh = new EncryptionHandler(blockSize,keySize, numRounds);//block size,key size
+			
+			eh.generateSubKeys(hashedPassword);
+			eh.encrypt(fh.returnFile());
+			eh.decrypt(userPassword);
+			
+				
+		} catch (IOException e) {
 		
-	try {
-            fh.importFile("C:\\Users\\Garrett\\Documents\\GitHub\\4389_EncryptionScheme\\EncryptionSchemeMain\\testFile.txt");
-            //eh.encrypt(fh.returnFile());
-	} catch (IOException e) {
-            e.printStackTrace();
-	}                 
+			e.printStackTrace();
+		}  catch (NoSuchAlgorithmException e) {
+			
+			e.printStackTrace();
+		}             
 
         // sample text to work with @@Jamie
 	String sampleText = "Sample secret.";
@@ -38,6 +59,12 @@ public class EncryptionMain
         }
                     
     }
+    
+    
+    
+    
+    
+    
 
     public String encrypt(String origText) throws Exception 
     {
