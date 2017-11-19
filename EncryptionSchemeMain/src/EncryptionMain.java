@@ -29,7 +29,7 @@ public class EncryptionMain
 			
 			fileSalt =HashHandler.returnSalt();
 			hashedFile=	HashHandler.SHA256(eh.encryptedText);
-			System.out.println("Hashed File: "+hashedFile);
+			System.out.println("Hashed File1: "+hashedFile);
 			
 			
 			//Demo Integrity Check
@@ -40,7 +40,7 @@ public class EncryptionMain
 			
 			fileSalt =HashHandler.returnSalt();
 			hashedFile=	HashHandler.SHA256(eh.encryptedText);
-			System.out.println("Hashed File: "+hashedFile);
+			System.out.println("Hashed File2: "+hashedFile);
 			//END DEMO
 			
 				
