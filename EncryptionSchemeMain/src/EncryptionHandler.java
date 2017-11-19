@@ -47,16 +47,18 @@ public class EncryptionHandler {
 		}
 		
 		System.out.println();
-		 System.out.println("First Round:\t");
-		/*for(int x=0;x<encryptedOutput.size();x++)
+		System.out.println("First Round:\t");
+		for(int x=0;x<encryptedOutput.size();x++)
 		{
 			byte holder[] =new byte[4];
 			 holder = encryptedOutput.get(x);
 			
 			 System.out.print((char)(holder[0]+holder[1]+holder[2]+holder[3]));
-		}*/
+		}
 		encryptedOutput = executeRounds(encryptedOutput,hashBytes);
-		 /*System.out.println("Second Round :\t");
+		
+		System.out.println();
+		System.out.println("Second Round :\t");
 		for(int x=0;x<encryptedOutput.size();x++)
 		{
 			byte holder[] =new byte[4];
@@ -64,6 +66,8 @@ public class EncryptionHandler {
 			
 			 System.out.print((char)(holder[0]+holder[1]+holder[2]+holder[3]));
 		}//*/
+		
+		
 		out = new FileOutputStream("EncryptRound2.txt");
 		for(int x=0;x<encryptedOutput.size();x++)
 		{
@@ -97,7 +101,8 @@ public class EncryptionHandler {
 			decryptedOutput=unXorBlockAndKey(decryptedOutput,hashBytes);
 			
 		}
-		System.out.println();
+		
+		
 		System.out.println();
 		 System.out.println("Unencrypted:\t");
 		for(int x=0;x<decryptedOutput.size();x++)

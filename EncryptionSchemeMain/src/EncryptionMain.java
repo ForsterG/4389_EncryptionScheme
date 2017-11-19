@@ -1,10 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package encryptionschememain;
-
 import java.io.IOException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
@@ -15,12 +8,12 @@ import javax.crypto.SecretKey;
 
 public class EncryptionMain 
 {
-	String userPassword= "UTDALLAS"; // user entered password;
-	int blockSize = 64;
-	int keySize = 64;//currently based on SHA256 return value
-	int numRounds = 16;
-	String hashedPassword;
-	byte userSalt[];
+	static String userPassword= "UTDALLAS"; // user entered password;
+	static int blockSize = 64;
+	static int keySize = 64;//currently based on SHA256 return value
+	static int numRounds = 16;
+	static String hashedPassword;
+	static byte userSalt[];
 	
     public static void main(String[] args) 
     {
@@ -48,7 +41,7 @@ public class EncryptionMain
 		}             
 
         // sample text to work with @@Jamie
-	String sampleText = "Sample secret.";
+	/*String sampleText = "Sample secret.";
 	System.out.println(sampleText);
         
         byte[] key = generate();
@@ -56,16 +49,10 @@ public class EncryptionMain
         for(int i = 0; i< key.length; i++)
         {
             System.out.println(key[i]); 
-        }
+        }*/
                     
     }
     
-    
-    
-    
-    
-    
-
     public String encrypt(String origText) throws Exception 
     {
         return encrypt(generate(), origText);
