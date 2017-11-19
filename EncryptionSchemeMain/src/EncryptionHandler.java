@@ -19,7 +19,7 @@ public class EncryptionHandler {
 	private ArrayList<byte[]> encryptedOutput = new ArrayList<byte[]>();
 	private ArrayList<byte[]> decryptedOutput = new ArrayList<byte[]>();
 	
-	public EncryptionHandler(int blockSize, int keySize, int numRounds){
+	public EncryptionHandler(int blockSize, int keySize, int numRounds,keyHandler kh){
 		this.numRounds=numRounds;
 	}
 	
@@ -68,11 +68,7 @@ public class EncryptionHandler {
 		}//*/
 		
 		
-		out = new FileOutputStream("EncryptRound2.txt");
-		for(int x=0;x<encryptedOutput.size();x++)
-		{
-			out.write(encryptedOutput.get(x));
-		}
+		
 		
 		for(int x=0;x<numRounds;x++)
 		{
@@ -83,8 +79,14 @@ public class EncryptionHandler {
 		}
 		
 		
+		out = new FileOutputStream("Encrypted.txt");
+		for(int x=0;x<encryptedOutput.size();x++)
+		{
+			out.write(encryptedOutput.get(x));
+		}
 		
 		out.close();
+		
 		return encryptedOutput;
 		
 	}
