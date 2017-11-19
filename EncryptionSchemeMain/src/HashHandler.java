@@ -2,18 +2,21 @@ import java.security.*;
 import java.lang.StringBuilder;
 
 class HashHandler{
-    public static void main(String []args) throws NoSuchAlgorithmException{
+    public static void main(String args[]) throws NoSuchAlgorithmException{
 
-        String filecontent= "file"; // user entered password;
-        SHA256(filecontent);
+        //String filecontent= userInput; // user entered password;
+        //SHA256(filecontent);
 
     }//main
+    private static byte salt[]=null;
+    
+    public static void setSalt(byte [] userSalt) {
+    	salt = userSalt;
+    }
+ 
+    public static String SHA256(String pass) throws NoSuchAlgorithmException{
 
-
-
-    private static String SHA256(String pass) throws NoSuchAlgorithmException{
-
-        byte [] salt= returnSalt(); //returned salt
+        //byte [] salt= returnSalt(); //returned salt
          String generatedHash=null;
        try{
             MessageDigest mess= MessageDigest.getInstance("SHA-256");
@@ -26,7 +29,7 @@ class HashHandler{
             }
 
             generatedHash=sb.toString();
-            System.out.println(generatedHash);
+            //System.out.println(generatedHash);
             }
         catch(NoSuchAlgorithmException e){
             //
@@ -35,20 +38,14 @@ class HashHandler{
         return generatedHash;
         }
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-//  Function to return salt.
-//
-////////////////////////////////////////////////////////////////////////////////////////////////
       public static byte[] returnSalt(){
-
-        byte salt[]=null;
+    	
         try{
         SecureRandom secure = SecureRandom.getInstance("SHA1PRNG");
         salt= new byte[16];
         secure.nextBytes(salt);
       }catch(NoSuchAlgorithmException e){
-        //
+        
       }
 
         return salt;
