@@ -16,11 +16,7 @@ public class EncryptionHandler {
 	private ArrayList<Integer> hashChars=new ArrayList<Integer>();
 	private ArrayList<byte[]> hashBytes = new ArrayList<byte[]>();
 	
-	
-	
-	
 	private ArrayList<byte[]> encryptedOutput = new ArrayList<byte[]>();
-	private ArrayList<byte[]> encryptedOutput2 = new ArrayList<byte[]>();
 	private ArrayList<byte[]> unencryptedOutput = new ArrayList<byte[]>();
 	
 	public EncryptionHandler(int blockSize, int keySize, int numRounds){
@@ -34,6 +30,7 @@ public class EncryptionHandler {
 		
 		splitIntoHalfBlocks(fileChars);
 		splitHash(hashChars);
+		
 		System.out.println("Unecrypted:\t");
 		for(int x=0;x<halfBlockArray.size();x++)
 		{
@@ -43,10 +40,9 @@ public class EncryptionHandler {
 			 System.out.print((char)(holder[0]+holder[1]+holder[2]+holder[3]));
 		}
 		
-		
 		encryptedOutput = xorBlockAndKey(halfBlockArray,hashBytes);
 		System.out.println();
-		 System.out.println("Encrypted:\t");
+		 System.out.println("Xor:\t");
 		for(int x=0;x<encryptedOutput.size();x++)
 		{
 			byte holder[] =new byte[4];
@@ -54,25 +50,36 @@ public class EncryptionHandler {
 			
 			 System.out.print((char)(holder[0]+holder[1]+holder[2]+holder[3]));
 		}
-		
-		
-		
-		
-		
-		encryptedOutput2 = executeRounds(encryptedOutput,hashBytes);
+		encryptedOutput = executeRounds(encryptedOutput,hashBytes);
 		System.out.println();
-		 System.out.println("Encrypted INVERSE:\t");
-		for(int x=0;x<encryptedOutput2.size();x++)
+		 System.out.println("Encrypted inv xor :\t");
+		for(int x=0;x<encryptedOutput.size();x++)
 		{
 			byte holder[] =new byte[4];
-			 holder = encryptedOutput2.get(x);
+			 holder = encryptedOutput.get(x);
 			
 			 System.out.print((char)(holder[0]+holder[1]+holder[2]+holder[3]));
 		}//*/
 		
-		unencryptedOutput = unexecuteRounds(encryptedOutput2,hashBytes);
+		encryptedOutput = xorBlockAndKey(encryptedOutput,hashBytes);
+		encryptedOutput = executeRounds(encryptedOutput,hashBytes);
+		encryptedOutput = xorBlockAndKey(encryptedOutput,hashBytes);
+		encryptedOutput = executeRounds(encryptedOutput,hashBytes);
+		
+		
+		
+		
+		//HALF WAY POINT
+		unencryptedOutput = unexecuteRounds(encryptedOutput,hashBytes);
+		unencryptedOutput=unXorBlockAndKey(unencryptedOutput,hashBytes);
+		unencryptedOutput = unexecuteRounds(unencryptedOutput,hashBytes);
+		unencryptedOutput=unXorBlockAndKey(unencryptedOutput,hashBytes);
+		
+		
+		
+		unencryptedOutput = unexecuteRounds(unencryptedOutput,hashBytes);
 		System.out.println();
-		 System.out.println("unEncrypted :\t");
+		 System.out.println("unEncrypted xor :\t");
 		for(int x=0;x<unencryptedOutput.size();x++)
 		{
 			byte holder[] =new byte[4];
@@ -81,9 +88,9 @@ public class EncryptionHandler {
 			 System.out.print((char)(holder[0]+holder[1]+holder[2]+holder[3]));
 		}//*/
 		System.out.println();
-		unencryptedOutput=unXorBlockAndKey(encryptedOutput,hashBytes);
+		unencryptedOutput=unXorBlockAndKey(unencryptedOutput,hashBytes);
 		System.out.println();
-		 System.out.println("Encrypted:\t");
+		 System.out.println("Unencrypted:\t");
 		for(int x=0;x<unencryptedOutput.size();x++)
 		{
 			byte holder[] =new byte[4];
@@ -143,8 +150,6 @@ public class EncryptionHandler {
 		{
 			byte[] bytes = ByteBuffer.allocate(Integer.SIZE/8).putInt(fileChars.get(x)).array();
 			halfBlockArray.add(bytes);
-			
-			
 			
 			//Debug statement to list half-blocks
 			/*for(int y= 0;y<bytes.length;y++)
@@ -239,7 +244,6 @@ public class EncryptionHandler {
 		//for(int x= 0;x<numRounds;x++)
 		//{
 			
-			
 			for(int y= 0;y<blockArray.size();y++)
 			{
 				byte holder[] =new byte[4];
@@ -257,15 +261,14 @@ public class EncryptionHandler {
 					//System.out.println("\t"+holder[z]);
 				}
 				
-				outputList.add(holder);
-				
+					outputList.add(holder);
+						
 			}
 			/*for(int e= 0;e<encryptedOutput.size();e++)
 			{
 				byte xorByte[]=new byte[4];
 				byte formBytes[] = blockArray.get(e);
 				byte keyBytes[] = keyArray.get(e%keyArray.size());
-				
 				
 				for(int y =0;y<blockArray.get(x).length;y++)
 				{
@@ -283,9 +286,6 @@ public class EncryptionHandler {
 			
 		//}//*///numrounds
 		return outputList;
-		
-		
-		
 	}
 	
 	
