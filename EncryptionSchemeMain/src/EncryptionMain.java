@@ -13,7 +13,6 @@ public class EncryptionMain {
 		String hashedPassword;
 		byte userSalt[];
 		
-		
 		try {
 			FileHandler fh = new FileHandler();
 			fh.importFile("C:\\Users\\Garrett\\Documents\\GitHub\\4389_EncryptionScheme\\EncryptionSchemeMain\\testFile.txt");
@@ -21,12 +20,13 @@ public class EncryptionMain {
 			userSalt =HashHandler.returnSalt();
 			hashedPassword = HashHandler.SHA256(userPassword);
 			keySize = hashedPassword.length()-1;
-			//System.out.println("Hashed Password: "+hashedPassword);
 			
 			EncryptionHandler eh = new EncryptionHandler(blockSize,keySize, numRounds);//block size,key size
 			
 			eh.generateSubKeys(hashedPassword);
 			eh.encrypt(fh.returnFile());
+			eh.decrypt(userPassword);
+			
 				
 		} catch (IOException e) {
 		

@@ -1,3 +1,5 @@
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -5,28 +7,23 @@ import java.util.List;
 
 public class EncryptionHandler {
 	
-	private int keySize;
-	private int blockSize;
+
 	private int numRounds;
 	
 	private char[] hashChar;
-	//private ArrayList<byte[]> subKeyList = new ArrayList<byte[]>();
 	private ArrayList<byte[]> halfBlockArray = new ArrayList<byte[]>();
 	
 	private ArrayList<Integer> hashChars=new ArrayList<Integer>();
 	private ArrayList<byte[]> hashBytes = new ArrayList<byte[]>();
 	
 	private ArrayList<byte[]> encryptedOutput = new ArrayList<byte[]>();
-	private ArrayList<byte[]> unencryptedOutput = new ArrayList<byte[]>();
+	private ArrayList<byte[]> decryptedOutput = new ArrayList<byte[]>();
 	
 	public EncryptionHandler(int blockSize, int keySize, int numRounds){
-		this.blockSize=blockSize;
-		this.keySize=keySize;
 		this.numRounds=numRounds;
-		
 	}
 	
-	public void encrypt(ArrayList<Integer> fileChars) throws IOException{
+	public ArrayList<byte[]> encrypt(ArrayList<Integer> fileChars) throws IOException{
 		
 		splitIntoHalfBlocks(fileChars);
 		splitHash(hashChars);
@@ -38,21 +35,28 @@ public class EncryptionHandler {
 			 holder = halfBlockArray.get(x);
 			 
 			 System.out.print((char)(holder[0]+holder[1]+holder[2]+holder[3]));
-		}
+		}//*/
 		
 		encryptedOutput = xorBlockAndKey(halfBlockArray,hashBytes);
-		System.out.println();
-		 System.out.println("Xor:\t");
+		FileOutputStream out = null;
+		out = new FileOutputStream("EncryptRound1.txt");
+		
 		for(int x=0;x<encryptedOutput.size();x++)
 		{
-			byte holder[] =new byte[4];
-			 holder = encryptedOutput.get(x);
-			
-			 System.out.print((char)(holder[0]+holder[1]+holder[2]+holder[3]));
+			out.write(encryptedOutput.get(x));
 		}
-		encryptedOutput = executeRounds(encryptedOutput,hashBytes);
+		
 		System.out.println();
-		 System.out.println("Encrypted inv xor :\t");
+		 System.out.println("First Round:\t");
+		/*for(int x=0;x<encryptedOutput.size();x++)
+		{
+			byte holder[] =new byte[4];
+			 holder = encryptedOutput.get(x);
+			
+			 System.out.print((char)(holder[0]+holder[1]+holder[2]+holder[3]));
+		}*/
+		encryptedOutput = executeRounds(encryptedOutput,hashBytes);
+		 /*System.out.println("Second Round :\t");
 		for(int x=0;x<encryptedOutput.size();x++)
 		{
 			byte holder[] =new byte[4];
@@ -60,48 +64,61 @@ public class EncryptionHandler {
 			
 			 System.out.print((char)(holder[0]+holder[1]+holder[2]+holder[3]));
 		}//*/
-		
-		encryptedOutput = xorBlockAndKey(encryptedOutput,hashBytes);
-		encryptedOutput = executeRounds(encryptedOutput,hashBytes);
-		encryptedOutput = xorBlockAndKey(encryptedOutput,hashBytes);
-		encryptedOutput = executeRounds(encryptedOutput,hashBytes);
-		
-		
-		
-		
-		//HALF WAY POINT
-		unencryptedOutput = unexecuteRounds(encryptedOutput,hashBytes);
-		unencryptedOutput=unXorBlockAndKey(unencryptedOutput,hashBytes);
-		unencryptedOutput = unexecuteRounds(unencryptedOutput,hashBytes);
-		unencryptedOutput=unXorBlockAndKey(unencryptedOutput,hashBytes);
-		
-		
-		
-		unencryptedOutput = unexecuteRounds(unencryptedOutput,hashBytes);
-		System.out.println();
-		 System.out.println("unEncrypted xor :\t");
-		for(int x=0;x<unencryptedOutput.size();x++)
+		out = new FileOutputStream("EncryptRound2.txt");
+		for(int x=0;x<encryptedOutput.size();x++)
 		{
-			byte holder[] =new byte[4];
-			 holder = unencryptedOutput.get(x);
+			out.write(encryptedOutput.get(x));
+		}
+		
+		for(int x=0;x<numRounds;x++)
+		{
 			
-			 System.out.print((char)(holder[0]+holder[1]+holder[2]+holder[3]));
-		}//*/
+			encryptedOutput = xorBlockAndKey(encryptedOutput,hashBytes);
+			encryptedOutput = executeRounds(encryptedOutput,hashBytes);
+			
+		}
+		
+		
+		
+		out.close();
+		return encryptedOutput;
+		
+	}
+	
+	public ArrayList<byte[]> decrypt(String userPassHash) throws IOException
+	{
+		generateSubKeys(userPassHash);
+		decryptedOutput = unexecuteRounds(encryptedOutput,hashBytes);
+		decryptedOutput=unXorBlockAndKey(decryptedOutput,hashBytes);
+		
+		for(int x=0;x<numRounds;x++)
+		{
+			decryptedOutput = unexecuteRounds(encryptedOutput,hashBytes);
+			decryptedOutput=unXorBlockAndKey(decryptedOutput,hashBytes);
+			
+		}
 		System.out.println();
-		unencryptedOutput=unXorBlockAndKey(unencryptedOutput,hashBytes);
 		System.out.println();
 		 System.out.println("Unencrypted:\t");
-		for(int x=0;x<unencryptedOutput.size();x++)
+		for(int x=0;x<decryptedOutput.size();x++)
 		{
 			byte holder[] =new byte[4];
-			 holder = unencryptedOutput.get(x);
+			 holder = decryptedOutput.get(x);
 			
 			 System.out.print((char)(holder[0]+holder[1]+holder[2]+holder[3]));
 		}//*/
 		
+		FileOutputStream out = null;
+		out = new FileOutputStream("Decrypted.txt");
 		
-	
+		for(int x=0;x<encryptedOutput.size();x++)
+		{
+			out.write(decryptedOutput.get(x));
+		}
+		out.close();
+		return decryptedOutput;
 	}
+	
 	
 	public void generateSubKeys(String userPassHash){
 		
@@ -114,10 +131,9 @@ public class EncryptionHandler {
 			/*for(int y=0;y<bytes.length;y++)
 			{
 				System.out.println(bytes[y]);
-			}*/
+			}//*/
 			hashBytes.add(bytes);
 		}
-		
 	}
 
 	
@@ -319,4 +335,4 @@ public class EncryptionHandler {
 	//}
 		return outputList;
 }
-}//class
+}//CLASS END
