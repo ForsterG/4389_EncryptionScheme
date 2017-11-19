@@ -9,10 +9,8 @@ import javax.crypto.SecretKey;
 public class EncryptionMain 
 {
 	static String userPassword= "UTDALLAS"; // user entered password;
-	static String falsePassword ="HACKER ATTEMPTING TO CRACK";
-	static int blockSize = 64;
-	static int keySize = 64;//currently based on SHA256 return value
-	static int numRounds = 0;
+	static String falsePassword ="FALSE PASSWORD";
+	static int numRounds = 16;
 	
 	
 	static String hashedPassword;
@@ -40,28 +38,11 @@ public class EncryptionMain
 			
 				
 		} catch (IOException e) {
-		
 			e.printStackTrace();
 		}  catch (NoSuchAlgorithmException e) {
-			
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}             
-
-        // sample text to work with @@Jamie
-	/*String sampleText = "Sample secret.";
-	System.out.println(sampleText);
-        
-        byte[] key = generate();
-        
-        for(int i = 0; i< key.length; i++)
-        {
-            System.out.println(key[i]); 
-        }*/
-                    
-    }
-    
-    
+    } 
 }

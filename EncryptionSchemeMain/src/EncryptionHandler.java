@@ -6,13 +6,8 @@ import java.util.ArrayList;
 
 public class EncryptionHandler {
 	
-
 	private int numRounds;
 	public String encryptedText="EncryptRound1";
-	
-	
-	
-	
 	
 	public EncryptionHandler(int numRounds, String userHashPassword,String falseHashPassword,ArrayList<Integer> userFile) throws IOException{
 		this.numRounds=numRounds;
@@ -24,7 +19,7 @@ public class EncryptionHandler {
 		hashBlockArray = generateSubKeys(userHashPassword);
 		
 		ArrayList<byte[]> encryptedMain = new ArrayList<byte[]>();
-		encryptedMain = encrypt(halfBlockArray,hashBlockArray,encryptedText);
+		encryptedMain = encrypt(halfBlockArray,hashBlockArray,encryptedText,this.numRounds);
 		
 		ArrayList<byte[]> decryptedMain = new ArrayList<byte[]>();
 		decryptedMain =decrypt(encryptedMain,hashBlockArray,"DecryptRound1.txt");
@@ -52,8 +47,7 @@ public class EncryptionHandler {
 		
 	}
 	
-	public ArrayList<byte[]> encrypt(ArrayList<byte[]> fileBytes, ArrayList<byte[]> hashBytes,String fileName) throws IOException{
-		
+	public ArrayList<byte[]> encrypt(ArrayList<byte[]> fileBytes, ArrayList<byte[]> hashBytes,String fileName,int number) throws IOException{
 		
 		ArrayList<byte[]> encryptedOutput = new ArrayList<byte[]>();
 		FileOutputStream out = null;
@@ -68,57 +62,16 @@ public class EncryptionHandler {
 		
 		encryptedOutput = executeRounds(encryptedOutput, hashBytes);
 		
-		
 		out = new FileOutputStream(fileName+"_ 2.txt");
 		
 		for(int x=0;x<encryptedOutput.size();x++)
 		{
 			out.write(encryptedOutput.get(x));
 		}
-		
-		/*System.out.println();
-		System.out.println("First Round:\t");
-		for(int x=0;x<encryptedOutput.size();x++)
-		{
-			byte holder[] =new byte[4];
-			 holder = encryptedOutput.get(x);
 			
-			 System.out.print((char)(holder[0]+holder[1]+holder[2]+holder[3]));
-		}
-		encryptedOutput = executeRounds(encryptedOutput,hashBytes);
-		
-		System.out.println();
-		System.out.println("Second Round :\t");
-		for(int x=0;x<encryptedOutput.size();x++)
-		{
-			byte holder[] =new byte[4];
-			 holder = encryptedOutput.get(x);
-			
-			 System.out.print((char)(holder[0]+holder[1]+holder[2]+holder[3]));
-		}//
-		
-		
-		
-		
-		for(int x=0;x<numRounds;x++)
-		{
-			
-			encryptedOutput = xorBlockAndKey(encryptedOutput,hashBytes);
-			encryptedOutput = executeRounds(encryptedOutput,hashBytes);
-			
-		}
-		
-		
-		out = new FileOutputStream("Encrypted.txt");
-		for(int x=0;x<encryptedOutput.size();x++)
-		{
-			out.write(encryptedOutput.get(x));
-		}*/
-		
 		out.close();
 		
 		return encryptedOutput;
-		
 	}
 	
 	public ArrayList<byte[]> decrypt(ArrayList<byte[]> fileBytes, ArrayList<byte[]> hashBytes,String fileName) throws IOException
