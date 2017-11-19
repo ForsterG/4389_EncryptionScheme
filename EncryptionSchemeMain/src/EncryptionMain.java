@@ -1,3 +1,4 @@
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
@@ -35,6 +36,22 @@ public class EncryptionMain
 			fileSalt =HashHandler.returnSalt();
 			hashedFile=	HashHandler.SHA256(eh.encryptedText);
 			System.out.println("Hashed File: "+hashedFile);
+			
+			
+			
+			//Demo Integrity Check
+			FileOutputStream out = null;
+			out = new FileOutputStream(eh.encryptedText);
+			out.write((char)+165165453);
+			out.close();
+			
+			fileSalt =HashHandler.returnSalt();
+			hashedFile=	HashHandler.SHA256(eh.encryptedText);
+			System.out.println("Hashed File: "+hashedFile);
+			
+			
+			
+			
 			
 				
 		} catch (IOException e) {
