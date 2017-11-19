@@ -20,6 +20,7 @@ public class EncryptionHandler {
 	
 	
 	private ArrayList<byte[]> encryptedOutput = new ArrayList<byte[]>();
+	private ArrayList<byte[]> encryptedOutput2 = new ArrayList<byte[]>();
 	private ArrayList<byte[]> unencryptedOutput = new ArrayList<byte[]>();
 	
 	public EncryptionHandler(int blockSize, int keySize, int numRounds){
@@ -55,16 +56,32 @@ public class EncryptionHandler {
 		}
 		
 		
-		/*byte[] holder =new byte[4];
-		 holder = encryptedOutput.get(0);
-		 System.out.println(holder[0]);
-			System.out.println(holder[1]);
-			System.out.println(holder[2]);
-			System.out.println(holder[3]);*/
+		
+		
+		
+		encryptedOutput2 = executeRounds(encryptedOutput,hashBytes);
 		System.out.println();
+		 System.out.println("Encrypted INVERSE:\t");
+		for(int x=0;x<encryptedOutput2.size();x++)
+		{
+			byte holder[] =new byte[4];
+			 holder = encryptedOutput2.get(x);
+			
+			 System.out.print((char)(holder[0]+holder[1]+holder[2]+holder[3]));
+		}//*/
 		
+		unencryptedOutput = unexecuteRounds(encryptedOutput2,hashBytes);
+		System.out.println();
+		 System.out.println("unEncrypted :\t");
+		for(int x=0;x<unencryptedOutput.size();x++)
+		{
+			byte holder[] =new byte[4];
+			 holder = unencryptedOutput.get(x);
+			
+			 System.out.print((char)(holder[0]+holder[1]+holder[2]+holder[3]));
+		}//*/
+		System.out.println();
 		unencryptedOutput=unXorBlockAndKey(encryptedOutput,hashBytes);
-		
 		System.out.println();
 		 System.out.println("Encrypted:\t");
 		for(int x=0;x<unencryptedOutput.size();x++)
@@ -73,11 +90,7 @@ public class EncryptionHandler {
 			 holder = unencryptedOutput.get(x);
 			
 			 System.out.print((char)(holder[0]+holder[1]+holder[2]+holder[3]));
-		}
-		
-		//executeRounds(xorBlockKey,hashBytes);
-		
-		
+		}//*/
 		
 		
 	
@@ -219,31 +232,35 @@ public class EncryptionHandler {
 		return unXorBlockKey;
 	}
 	
-	private void executeRounds(ArrayList<byte[]> blockArray, ArrayList<byte[]> keyArray){
-		/*for(int x= 0;x<numRounds;x++)
-		{
-			byte[] holder =new byte[4];
-			byte[] blockBytes = null;
+	private ArrayList<byte[]> executeRounds(ArrayList<byte[]> blockArray, ArrayList<byte[]> keyArray){
+		
+		ArrayList<byte[]> outputList = new ArrayList<byte[]>();
+		
+		//for(int x= 0;x<numRounds;x++)
+		//{
+			
 			
 			for(int y= 0;y<blockArray.size();y++)
 			{
-				blockBytes = xorBlockKey.get(y);
-				System.out.println(holder[0]);
-				System.out.println(holder[1]);
-				System.out.println(holder[2]);
-				System.out.println(holder[3]);
+				byte holder[] =new byte[4];
+				byte blockBytes[] = null;
+				blockBytes = blockArray.get(y);
+				/*System.out.println(blockBytes[0]);
+				System.out.println(blockBytes[1]);
+				System.out.println(blockBytes[2]);
+				System.out.println(blockBytes[3]);*/
 				
 				for(int z =0;z<blockArray.get(y).length;z++)
 				{
 					holder[z]=(byte) ~blockBytes[z];
-					System.out.print(blockBytes[z]);
-					System.out.println("\t"+holder[z]);
+					//System.out.print("OUTPUT"+blockBytes[z]);
+					//System.out.println("\t"+holder[z]);
 				}
 				
-				encryptedOutput.add(holder);
+				outputList.add(holder);
 				
 			}
-			for(int e= 0;e<encryptedOutput.size();e++)
+			/*for(int e= 0;e<encryptedOutput.size();e++)
 			{
 				byte xorByte[]=new byte[4];
 				byte formBytes[] = blockArray.get(e);
@@ -262,16 +279,44 @@ public class EncryptionHandler {
 			 xorBlockKey.add(xorByte);
 			// System.out.println("OUTPUT"+(xorByte[0]+xorByte[1]+xorByte[2]+xorByte[3]));
 			 
-			}
+			}*/
 			
 		//}//*///numrounds
+		return outputList;
 		
 		
 		
 	}
 	
 	
-	public void decrypt(){
+	public ArrayList<byte[]> unexecuteRounds(ArrayList<byte[]> blockArray, ArrayList<byte[]> keyArray){
+		ArrayList<byte[]> outputList = new ArrayList<byte[]>();
+		//for(int x= 0;x<numRounds;x++)
+		//{
+			
+			
+			for(int y= 0;y<blockArray.size();y++)
+			{
+				byte holder[] =new byte[4];
+				byte blockBytes[] = null;
+				blockBytes = blockArray.get(y);
+				/*System.out.println(holder[0]);
+				System.out.println(holder[1]);
+				System.out.println(holder[2]);
+				System.out.println(holder[3]);*/
+				
+				for(int z =0;z<blockArray.get(y).length;z++)
+				{
+					holder[z]=(byte) ~blockBytes[z];
+					//System.out.print("UNREVERSED"+blockBytes[z]);
+					//System.out.println("\t"+holder[z]);
+				}
+				
+				outputList.add(holder);
+				
+			}
 	
-	}
+	//}
+		return outputList;
 }
+}//class
